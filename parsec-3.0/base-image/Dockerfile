@@ -10,12 +10,18 @@ RUN apt-get clean && apt-get update && apt-get install -y \
 	patch\
 	wget\
         xz-utils\
-&& wget -nv -P /home/parsec-3.0 http://parsec.cs.princeton.edu/download/3.0/parsec-3.0.tar.gz \
-&& tar -C /home/ -xvf /home/parsec-3.0/parsec-3.0.tar.gz \
-&& rm /home/parsec-3.0/parsec-3.0.tar.gz \
-&& patch -d /home/parsec-3.0 -p1 < /home/parsec-3.0/netdedup-runconf.patch \
+&& wget -nv -P /home/parsec-3.0 https://github.com/connorimes/parsec-3.0/archive/refs/heads/master.tar.gz -O /home/parsec-3.0/parsec-3.0.tar.gz
+
+RUN tar -C /home/parsec-3.0 -xvf /home/parsec-3.0/parsec-3.0.tar.gz --strip-components=1
+#&& rm /home/parsec-3.0/parsec-3.0.tar.gz \
+
+#RUN mv /home/parsec-3.0-master/* /home/parsec-3.0/
+# ^^ delete soon!!! no need
+
+# && patch -d /home/parsec-3.0 -p1 < /home/parsec-3.0/pod.patch \ # <-- narek:: no longer applies cleanly. modifies ssl docs?? .pod files?? does not look like code at least
+
+RUN patch -d /home/parsec-3.0 -p1 < /home/parsec-3.0/netdedup-runconf.patch \
 && patch -d /home/parsec-3.0 -p1 < /home/parsec-3.0/netdedup-run.patch \
-&& patch -d /home/parsec-3.0 -p1 < /home/parsec-3.0/pod.patch \
 && patch -d /home/parsec-3.0 -p1 < /home/parsec-3.0/uptcpip.patch \
 && rm /home/parsec-3.0/pod.patch /home/parsec-3.0/uptcpip.patch /home/parsec-3.0/netdedup-run.patch /home/parsec-3.0/netdedup-runconf.patch \
 && find /home/parsec-3.0/ -name \*.tar -exec xz -9 \{\} \; \
